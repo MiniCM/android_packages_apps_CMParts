@@ -42,6 +42,7 @@ public class CPUActivity extends PreferenceActivity implements
     public static final String MIN_FREQ_PREF = "pref_freq_min";
     public static final String MAX_FREQ_PREF = "pref_freq_max";
     public static final String FREQ_LIST_FILE = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies";
+    public static final String FREQ_LIST_FILE2 = "/data/local/tmp/available_frequencies";
     public static final String FREQ_MAX_FILE = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq";
     public static final String FREQ_MIN_FILE = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq";
     public static final String SOB_PREF = "pref_set_on_boot";
@@ -67,6 +68,7 @@ public class CPUActivity extends PreferenceActivity implements
         String[] availableGovernors = readOneLine(GOVERNORS_LIST_FILE).split(" ");
         String[] availableFrequencies = new String[0];
         String availableFrequenciesLine = readOneLine(FREQ_LIST_FILE);
+	Log.e(TAG, "I read:: " + availableFrequenciesLine);
         if (availableFrequenciesLine != null)
              availableFrequencies = availableFrequenciesLine.split(" ");
         String[] frequencies;
@@ -176,6 +178,10 @@ public class CPUActivity extends PreferenceActivity implements
             }
         } catch (Exception e) {
             Log.e(TAG, "IO Exception when reading /sys/ file", e);
+            if ( fname.endsWith("scaling_available_frequencies") ) {
+		Log.e(TAG, "Using " + FREQ_LIST_FILE2 + " instead");
+                return readOneLine(FREQ_LIST_FILE2);
+            }
         }
         return line;
     }
