@@ -142,19 +142,26 @@ public class CPUActivity extends PreferenceActivity implements
         /* Overclocking */
         mOverclockPref = (CheckBoxPreference) PrefScreen.findPreference(OVERCLOCK);
         mOverclockPref.setOnPreferenceChangeListener(this);
-        if (SystemProperties.getInt(OVERCLOCK_PERSIST_PROP, OVERCLOCK_DEFAULT) == 0)
+        if (SystemProperties.getInt(OVERCLOCK_PERSIST_PROP, OVERCLOCK_DEFAULT) == 0) {
 		mOverclockPref.setChecked(false);
-	else
+		}
+	else {
 		mOverclockPref.setChecked(true);
+		
+		}
         
         /* Undervolting */
         mUndervoltPref = (CheckBoxPreference) PrefScreen.findPreference(UNDERVOLT);
+        //mUndervoltPref.setDependency(OVERCLOCK);
         mUndervoltPref.setOnPreferenceChangeListener(this);
         if (SystemProperties.getInt(UNDERVOLT_PERSIST_PROP, UNDERVOLT_DEFAULT) == 0)
 		mUndervoltPref.setChecked(false);
 	else
 		mUndervoltPref.setChecked(true);
-        
+        if (mOverclockPref.isChecked()==true) {
+        	mUndervoltPref.setEnabled(false);
+        }
+        	
     }
 
     @Override
@@ -183,7 +190,8 @@ public class CPUActivity extends PreferenceActivity implements
         	OC_MODULE = getResources().getString(R.string.overclocking_module);
                 value = mOverclockPref.isChecked();
                 if (value==true) {
-		    SystemProperties.set(OVERCLOCK_PERSIST_PROP, "0");
+		        SystemProperties.set(OVERCLOCK_PERSIST_PROP, "0");
+		        mUndervoltPref.setEnabled(true);
 			//remove the overclocking module
 			//insmod(OV_MODULE, false);
 			// also update the available frequencies
@@ -207,6 +215,12 @@ public class CPUActivity extends PreferenceActivity implements
                 }
                 else {
 		    SystemProperties.set(OVERCLOCK_PERSIST_PROP, "1");
+	                // Disable undervolting
+	                mUndervoltPref.setChecked(false);
+	                SystemProperties.set(UNDERVOLT_PERSIST_PROP, "0");
+	                mUndervoltPref.setEnabled(false);
+			insmod(UV_MODULE, false);
+			
 			//insmod the overclocking module
 			insmod(OC_MODULE, true);
 			// also update the available frequencies
