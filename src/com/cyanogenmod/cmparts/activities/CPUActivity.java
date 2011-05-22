@@ -161,6 +161,9 @@ public class CPUActivity extends PreferenceActivity implements
         if (mOverclockPref.isChecked()==true) {
         	mUndervoltPref.setEnabled(false);
         }
+        if (mUndervoltPref.isChecked()==true) {
+        	mOverclockPref.setEnabled(false);
+        }
         	
     }
 
@@ -214,7 +217,7 @@ public class CPUActivity extends PreferenceActivity implements
             		mMaxFrequencyPref.setEntries(frequencies);
                 }
                 else {
-		    SystemProperties.set(OVERCLOCK_PERSIST_PROP, "1");
+		    	SystemProperties.set(OVERCLOCK_PERSIST_PROP, "1");
 	                // Disable undervolting
 	                mUndervoltPref.setChecked(false);
 	                SystemProperties.set(UNDERVOLT_PERSIST_PROP, "0");
@@ -249,13 +252,15 @@ public class CPUActivity extends PreferenceActivity implements
                 value = mUndervoltPref.isChecked();
                 if (value==true) {
 		    SystemProperties.set(UNDERVOLT_PERSIST_PROP, "0");
-			//remove the undervolting module
-			insmod(UV_MODULE, false);
+		    mOverclockPref.setEnabled(true);
+		    //remove the undervolting module
+		    insmod(UV_MODULE, false);
                 }
                 else {
 		    SystemProperties.set(UNDERVOLT_PERSIST_PROP, "1");
-			//insmod the undervolting module
-			insmod(UV_MODULE, true);
+		    mOverclockPref.setEnabled(false);
+		    //insmod the undervolting module
+		    insmod(UV_MODULE, true);
                 }
 		return true;
             }
