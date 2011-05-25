@@ -50,6 +50,12 @@
         <item>16m</item>
         <item>24m</item>
         <item>32m</item>
+<<<<<<< HEAD
+=======
+        <item>36m</item>
+        <item>40m</item>
+        <item>44m</item>
+>>>>>>> Adding more VM Heap size options.
         <item>48m</item>
     </string-array>
     
