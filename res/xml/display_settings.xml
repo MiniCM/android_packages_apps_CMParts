@@ -13,6 +13,11 @@
                 android:targetClass="com.cyanogenmod.cmparts.activities.BacklightActivity" />
         </PreferenceScreen>
 
+        <!-- Ultra brightness toggle -->
+        <CheckBoxPreference android:key="pref_ultra_brightness"
+            android:title="@string/pref_ultra_brightness_title"
+            android:summary="@string/pref_ultra_brightness_summary" />
+
         <!-- Electron beam animations -->
         <CheckBoxPreference android:key="electron_beam_animation_on"
             android:title="@string/pref_electron_beam_animation_on" />

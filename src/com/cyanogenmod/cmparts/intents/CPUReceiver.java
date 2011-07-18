@@ -29,11 +29,18 @@ import android.util.Log;
 import java.util.Arrays;
 import java.util.List;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import android.provider.Settings;
+
 public class CPUReceiver extends BroadcastReceiver {
 
     private static final String TAG = "CPUSettings";
 
     private static final String CPU_SETTINGS_PROP = "sys.cpufreq.restored";
+    
+    private static final String ULTRA_BRIGHTNESS_PROP = "persist.sys.ultrabrightness";
 
     @Override
     public void onReceive(Context ctx, Intent intent) {
@@ -44,6 +51,15 @@ public class CPUReceiver extends BroadcastReceiver {
         } else {
             SystemProperties.set(CPU_SETTINGS_PROP, "false");
         }
+        
+        if (SystemProperties.getBoolean(ULTRA_BRIGHTNESS_PROP, false) == true) {
+            writeOneLine("/sys/devices/platform/i2c-adapter/i2c-0/0-0036/mode", "i2c_pwm");
+            Log.e(TAG, "Ultra Brightness writing i2c_pwm: ");
+        }   
+        else {
+            writeOneLine("/sys/devices/platform/i2c-adapter/i2c-0/0-0036/mode", "i2c_pwm_als");
+            Log.e(TAG, "Ultra Brightness writing i2c_pwm_als: ");
+	}
     }
 
     private void configureCPU(Context ctx) {
@@ -84,5 +100,21 @@ public class CPUReceiver extends BroadcastReceiver {
             }
             Log.d(TAG, "CPU settings restored.");
         }
+    }
+    
+    public static boolean writeOneLine(String fname, String value) {
+        try {
+            FileWriter fw = new FileWriter(fname);
+            try {
+                fw.write(value);
+            } finally {
+                fw.close();
+            }
+        } catch (IOException e) {
+            String Error = "Error writing to " + fname + ". Exception: ";
+            Log.e(TAG, Error, e);
+            return false;
+        }
+        return true;
     }
 }
