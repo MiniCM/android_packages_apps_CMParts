@@ -825,6 +825,8 @@
     <string name="cpu_set_on_boot_summary">Restore CPU settings on boot</string>
     <string name="cpu_undervolt">Undervolt</string>
     <string name="cpu_undervolt_summary">Underolt the CPU (improves battery life but may cause instability)</string>
+    <string name="cpu_overclock">Overclock</string>
+    <string name="cpu_overclock_summary">Overclock the CPU (improves performance but may cause instability. Removing requires reboot)</string>
 
     <!-- Permissions Management Settings strings -->
     <string name="perm_enable_management">Permission management</string>

@@ -64,10 +64,22 @@ public class CPUActivity extends PreferenceActivity implements
     private static final String UNDERVOLT = "pref_undervolt";
     private static final String UNDERVOLT_PROP = "sys.undervolt";
     private static final String UNDERVOLT_PERSIST_PROP = "persist.sys.undervolt";
-    private static final int UNDERVOLT_DEFAULT = 0;    
+    private static final int UNDERVOLT_DEFAULT = 0; 
     private CheckBoxPreference mUndervoltPref;
+    
+    private static String OC_MODULE;
+    private static final String OVERCLOCK = "pref_overclock";
+    private static final String OVERCLOCK_PROP = "sys.overclock";
+    private static final String OVERCLOCK_PERSIST_PROP = "persist.sys.overclock";
+    private static final int OVERCLOCK_DEFAULT = 0; 
+    private CheckBoxPreference mOverclockPref;
 
+    private static String AVAILABLE_FREQUENCIES_FILE = "/data/local/tmp/available_frequencies";
+    
+    private static String OVERCLOCKED_FREQUENCIES = "122880 245760 320000 480000 600000 614400 633600 652800 672000 691200 710400 729600 748800 768000 787200 806400 825600";
 
+    private static String NON_OVERCLOCKED_FREQUENCIES = "122880 245760 320000 480000 600000";
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,6 +139,14 @@ public class CPUActivity extends PreferenceActivity implements
         mMaxFrequencyPref.setSummary(String.format(mMaxFrequencyFormat, toMHz(temp)));
         mMaxFrequencyPref.setOnPreferenceChangeListener(this);
         
+        /* Overclocking */
+        mOverclockPref = (CheckBoxPreference) PrefScreen.findPreference(OVERCLOCK);
+        mOverclockPref.setOnPreferenceChangeListener(this);
+        if (SystemProperties.getInt(OVERCLOCK_PERSIST_PROP, OVERCLOCK_DEFAULT) == 0)
+		mOverclockPref.setChecked(false);
+	else
+		mOverclockPref.setChecked(true);
+        
         /* Undervolting */
         mUndervoltPref = (CheckBoxPreference) PrefScreen.findPreference(UNDERVOLT);
         mUndervoltPref.setOnPreferenceChangeListener(this);
@@ -159,6 +179,57 @@ public class CPUActivity extends PreferenceActivity implements
         String fname = "";
 	boolean value;
         if (newValue != null) {
+            if (preference == mOverclockPref) {
+        	OC_MODULE = getResources().getString(R.string.overclocking_module);
+                value = mOverclockPref.isChecked();
+                if (value==true) {
+		    SystemProperties.set(OVERCLOCK_PERSIST_PROP, "0");
+			//remove the overclocking module
+			//insmod(OV_MODULE, false);
+			// also update the available frequencies
+            		writeOneLine(AVAILABLE_FREQUENCIES_FILE, NON_OVERCLOCKED_FREQUENCIES);
+            		String[] availableFrequencies = new String[0];
+			String availableFrequenciesLine = readOneLine(AVAILABLE_FREQUENCIES_FILE);
+			Log.e(TAG, "I read:: " + availableFrequenciesLine);
+			if (availableFrequenciesLine != null)
+			     availableFrequencies = availableFrequenciesLine.split(" ");
+			String[] frequencies;
+			String temp;
+
+			frequencies = new String[availableFrequencies.length];
+			for (int i = 0; i < frequencies.length; i++) {
+			    frequencies[i] = toMHz(availableFrequencies[i]);
+			}
+            		mMinFrequencyPref.setEntryValues(availableFrequencies);
+            		mMinFrequencyPref.setEntries(frequencies);
+            		mMaxFrequencyPref.setEntryValues(availableFrequencies);
+            		mMaxFrequencyPref.setEntries(frequencies);
+                }
+                else {
+		    SystemProperties.set(OVERCLOCK_PERSIST_PROP, "1");
+			//insmod the overclocking module
+			insmod(OC_MODULE, true);
+			// also update the available frequencies
+            		writeOneLine(AVAILABLE_FREQUENCIES_FILE, OVERCLOCKED_FREQUENCIES);
+            		String[] availableFrequencies = new String[0];
+			String availableFrequenciesLine = readOneLine(AVAILABLE_FREQUENCIES_FILE);
+			Log.e(TAG, "I read:: " + availableFrequenciesLine);
+			if (availableFrequenciesLine != null)
+			     availableFrequencies = availableFrequenciesLine.split(" ");
+			String[] frequencies;
+			String temp;
+
+			frequencies = new String[availableFrequencies.length];
+			for (int i = 0; i < frequencies.length; i++) {
+			    frequencies[i] = toMHz(availableFrequencies[i]);
+			}
+            		mMinFrequencyPref.setEntryValues(availableFrequencies);
+            		mMinFrequencyPref.setEntries(frequencies);
+            		mMaxFrequencyPref.setEntryValues(availableFrequencies);
+            		mMaxFrequencyPref.setEntries(frequencies);
+                }
+		return true;
+            }
             if (preference == mUndervoltPref) {
         	UV_MODULE = getResources().getString(R.string.undervolting_module);
                 value = mUndervoltPref.isChecked();

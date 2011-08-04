@@ -35,4 +35,7 @@
     
     <!-- Undervolting module -->
     <string name="undervolting_module">x10miniuv.ko</string>
+    
+    <!-- Overclocking module -->
+    <string name="overclocking_module">x10minioc.ko</string>
 </resources>

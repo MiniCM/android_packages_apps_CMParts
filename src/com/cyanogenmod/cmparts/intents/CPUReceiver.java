@@ -44,9 +44,19 @@ public class CPUReceiver extends BroadcastReceiver {
     
     private static final String ULTRA_BRIGHTNESS_PROP = "persist.sys.ultrabrightness";
     
+    private static final String OVERCLOCKING_PROP = "persist.sys.overclock";
+    
+    private static String OC_MODULE;
+        
     private static final String UNDERVOLTING_PROP = "persist.sys.undervolt";
 
     private static String UV_MODULE;
+    
+    private static String AVAILABLE_FREQUENCIES_FILE = "/data/local/tmp/available_frequencies";
+    
+    private static String OVERCLOCKED_FREQUENCIES = "122880 245760 320000 480000 600000 614400 633600 652800 672000 691200 710400 729600 748800 768000 787200 806400 825600";
+
+    private static String NON_OVERCLOCKED_FREQUENCIES = "122880 245760 320000 480000 600000";
 
     @Override
     public void onReceive(Context ctx, Intent intent) {
@@ -74,10 +84,26 @@ public class CPUReceiver extends BroadcastReceiver {
 	
         if (prefs.getBoolean(CPUActivity.SOB_PREF, false) == false) {
 	    SystemProperties.set(UNDERVOLTING_PROP, "0");
+	    SystemProperties.set(OVERCLOCKING_PROP, "0");
             Log.i(TAG, "Restore disabled by user preference.");
             return;
         }
-        
+
+	OC_MODULE = ctx.getResources().getString(com.cyanogenmod.cmparts.R.string.overclocking_module);
+	if (SystemProperties.getBoolean(OVERCLOCKING_PROP, false) == true) {
+            // insmod overclocking module
+            insmod(OC_MODULE, true);
+            // also update the available frequencies
+            CPUActivity.writeOneLine(AVAILABLE_FREQUENCIES_FILE, OVERCLOCKED_FREQUENCIES);
+            
+        }   
+        else {
+            // remove overclocking module
+            //insmod(UV_MODULE, false);
+            // also update the available frequencies
+            CPUActivity.writeOneLine(AVAILABLE_FREQUENCIES_FILE, NON_OVERCLOCKED_FREQUENCIES);
+	}
+	        
         UV_MODULE = ctx.getResources().getString(com.cyanogenmod.cmparts.R.string.undervolting_module);
 	if (SystemProperties.getBoolean(UNDERVOLTING_PROP, false) == true) {
             // insmod undervolting module
