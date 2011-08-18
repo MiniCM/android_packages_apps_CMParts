@@ -37,6 +37,8 @@ public class InputActivity extends PreferenceActivity implements ShortcutPickHel
     private static final String TRACKBALL_WAKE_PREF = "pref_trackball_wake";
 
     private static final String VOLUME_WAKE_PREF = "pref_volume_wake";
+    
+    private static final String BACK_BUTTON_ENDS_CALL_PREF = "pref_back_button_ends_call";
 
     private static final String VOLBTN_MUSIC_CTRL_PREF = "pref_volbtn_music_controls";
 
@@ -61,6 +63,8 @@ public class InputActivity extends PreferenceActivity implements ShortcutPickHel
     private CheckBoxPreference mTrackballWakePref;
 
     private CheckBoxPreference mVolumeWakePref;
+    
+    private CheckBoxPreference mBackButtonEndsCall;
 
     private CheckBoxPreference mVolBtnMusicCtrlPref;
 
@@ -100,6 +104,10 @@ public class InputActivity extends PreferenceActivity implements ShortcutPickHel
         mVolumeWakePref = (CheckBoxPreference) prefSet.findPreference(VOLUME_WAKE_PREF);
         mVolumeWakePref.setChecked(Settings.System.getInt(getContentResolver(),
                 Settings.System.VOLUME_WAKE_SCREEN, 0) == 1);
+        
+        /* Back button ends call */
+        mBackButtonEndsCall = (CheckBoxPreference) prefSet.findPreference(BACK_BUTTON_ENDS_CALL_PREF);
+        mBackButtonEndsCall.setChecked(Settings.System.getInt(getContentResolver(), Settings.System.BACK_BUTTON_ENDS_CALL, 0) == 1);
 
         /* Volume button music controls */
         mVolBtnMusicCtrlPref = (CheckBoxPreference) prefSet.findPreference(VOLBTN_MUSIC_CTRL_PREF);
@@ -187,6 +195,9 @@ public class InputActivity extends PreferenceActivity implements ShortcutPickHel
             value = mVolumeWakePref.isChecked();
             Settings.System.putInt(getContentResolver(), Settings.System.VOLUME_WAKE_SCREEN,
                     value ? 1 : 0);
+            return true;
+        } else if (preference == mBackButtonEndsCall) {
+            Settings.System.putInt(getContentResolver(), Settings.System.BACK_BUTTON_ENDS_CALL, mBackButtonEndsCall.isChecked() ? 1 : 0);
             return true;
         } else if (preference == mVolBtnMusicCtrlPref) {
             value = mVolBtnMusicCtrlPref.isChecked();
