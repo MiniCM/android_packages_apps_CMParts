@@ -10,7 +10,10 @@
   <ListPreference android:key="pref_freq_max" android:dialogTitle="@string/cpu_max_freq_title"
                   android:title="@string/cpu_max_freq_title" android:summary="Maximum CPU frequency" />
 
+  <CheckBoxPreference android:key="pref_undervolt"
+                      android:title="@string/cpu_undervolt" android:summary="@string/cpu_undervolt_summary"/>
+                      
   <CheckBoxPreference android:key="pref_set_on_boot"
                       android:title="@string/cpu_set_on_boot" android:summary="@string/cpu_set_on_boot_summary"/>
-
+                
 </PreferenceScreen>

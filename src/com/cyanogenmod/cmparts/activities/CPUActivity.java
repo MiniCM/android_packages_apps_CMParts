@@ -24,11 +24,14 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.util.Log;
-
+import android.preference.CheckBoxPreference;
+import android.os.SystemProperties;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.DataOutputStream;
+import java.io.DataInputStream;
 
 //
 // CPU Related Settings
@@ -56,6 +59,14 @@ public class CPUActivity extends PreferenceActivity implements
     private ListPreference mGovernorPref;
     private ListPreference mMinFrequencyPref;
     private ListPreference mMaxFrequencyPref;
+    
+    private static String UV_MODULE;
+    private static final String UNDERVOLT = "pref_undervolt";
+    private static final String UNDERVOLT_PROP = "sys.undervolt";
+    private static final String UNDERVOLT_PERSIST_PROP = "persist.sys.undervolt";
+    private static final int UNDERVOLT_DEFAULT = 0;    
+    private CheckBoxPreference mUndervoltPref;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +126,15 @@ public class CPUActivity extends PreferenceActivity implements
         mMaxFrequencyPref.setValue(temp);
         mMaxFrequencyPref.setSummary(String.format(mMaxFrequencyFormat, toMHz(temp)));
         mMaxFrequencyPref.setOnPreferenceChangeListener(this);
+        
+        /* Undervolting */
+        mUndervoltPref = (CheckBoxPreference) PrefScreen.findPreference(UNDERVOLT);
+        mUndervoltPref.setOnPreferenceChangeListener(this);
+        if (SystemProperties.getInt(UNDERVOLT_PERSIST_PROP, UNDERVOLT_DEFAULT) == 0)
+		mUndervoltPref.setChecked(false);
+	else
+		mUndervoltPref.setChecked(true);
+        
     }
 
     @Override
@@ -137,8 +157,23 @@ public class CPUActivity extends PreferenceActivity implements
 
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String fname = "";
-
+	boolean value;
         if (newValue != null) {
+            if (preference == mUndervoltPref) {
+        	UV_MODULE = getResources().getString(R.string.undervolting_module);
+                value = mUndervoltPref.isChecked();
+                if (value==true) {
+		    SystemProperties.set(UNDERVOLT_PERSIST_PROP, "0");
+			//remove the undervolting module
+			insmod(UV_MODULE, false);
+                }
+                else {
+		    SystemProperties.set(UNDERVOLT_PERSIST_PROP, "1");
+			//insmod the undervolting module
+			insmod(UV_MODULE, true);
+                }
+		return true;
+            }
             if (preference == mGovernorPref) {
                 fname = GOVERNOR;
             } else if (preference == mMinFrequencyPref) {
@@ -161,6 +196,7 @@ public class CPUActivity extends PreferenceActivity implements
             } else {
                 return false;
             }
+            
         }
         return false;
     }
@@ -205,4 +241,35 @@ public class CPUActivity extends PreferenceActivity implements
     private String toMHz(String mhzString) {
         return new StringBuilder().append(Integer.valueOf(mhzString) / 1000).append(" MHz").toString();
     }
+    
+    private static boolean insmod(String module, boolean insert) {
+    	String command;
+	if (insert)
+		command = "/system/bin/insmod /system/lib/modules/" + module;
+	else
+		command = "/system/bin/rmmod " + module;
+    	    try
+	    {
+		Process process = Runtime.getRuntime().exec("su");
+		Log.e(TAG, "Executing: " + command);
+		DataOutputStream outputStream = new DataOutputStream(process.getOutputStream()); 
+		DataInputStream inputStream = new DataInputStream(process.getInputStream());
+		outputStream.writeBytes(command + "\n");
+		outputStream.flush();
+		outputStream.writeBytes("exit\n"); 
+		outputStream.flush(); 
+		process.waitFor();
+	    }
+	    catch (IOException e)
+	    {
+		return false;
+	    }
+	    catch (InterruptedException e)
+	    {
+		return false;
+	    }
+        return true;
+    }
+
 }
+ 

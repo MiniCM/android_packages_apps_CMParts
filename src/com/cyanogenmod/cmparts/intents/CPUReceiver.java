@@ -33,6 +33,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import android.provider.Settings;
+import java.io.DataOutputStream;
+import java.io.DataInputStream;
 
 public class CPUReceiver extends BroadcastReceiver {
 
@@ -41,6 +43,10 @@ public class CPUReceiver extends BroadcastReceiver {
     private static final String CPU_SETTINGS_PROP = "sys.cpufreq.restored";
     
     private static final String ULTRA_BRIGHTNESS_PROP = "persist.sys.ultrabrightness";
+    
+    private static final String UNDERVOLTING_PROP = "persist.sys.undervolt";
+
+    private static String UV_MODULE;
 
     @Override
     public void onReceive(Context ctx, Intent intent) {
@@ -60,15 +66,27 @@ public class CPUReceiver extends BroadcastReceiver {
             writeOneLine("/sys/devices/platform/i2c-adapter/i2c-0/0-0036/mode", "i2c_pwm_als");
             Log.e(TAG, "Ultra Brightness writing i2c_pwm_als: ");
 	}
+	
     }
 
     private void configureCPU(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-
+	
         if (prefs.getBoolean(CPUActivity.SOB_PREF, false) == false) {
+	    SystemProperties.set(UNDERVOLTING_PROP, "0");
             Log.i(TAG, "Restore disabled by user preference.");
             return;
         }
+        
+        UV_MODULE = ctx.getResources().getString(com.cyanogenmod.cmparts.R.string.undervolting_module);
+	if (SystemProperties.getBoolean(UNDERVOLTING_PROP, false) == true) {
+            // insmod undervolting module
+            insmod(UV_MODULE, true);
+        }   
+        else {
+            // remove undervolting module
+            //insmod(UV_MODULE, false);
+	}
 
         String governor = prefs.getString(CPUActivity.GOV_PREF, null);
         String minFrequency = prefs.getString(CPUActivity.MIN_FREQ_PREF, null);
@@ -115,6 +133,35 @@ public class CPUReceiver extends BroadcastReceiver {
             Log.e(TAG, Error, e);
             return false;
         }
+        return true;
+    }
+    
+    private static boolean insmod(String module, boolean insert) {
+    	String command;
+	if (insert)
+		command = "/system/bin/insmod /system/lib/modules/" + module;
+	else
+		command = "/system/bin/rmmod " + module;
+    	    try
+	    {
+		Process process = Runtime.getRuntime().exec("su");
+		Log.e(TAG, "Executing: " + command);
+		DataOutputStream outputStream = new DataOutputStream(process.getOutputStream()); 
+		DataInputStream inputStream = new DataInputStream(process.getInputStream());
+		outputStream.writeBytes(command + "\n");
+		outputStream.flush();
+		outputStream.writeBytes("exit\n"); 
+		outputStream.flush(); 
+		process.waitFor();
+	    }
+	    catch (IOException e)
+	    {
+		return false;
+	    }
+	    catch (InterruptedException e)
+	    {
+		return false;
+	    }
         return true;
     }
 }

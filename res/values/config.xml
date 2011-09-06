@@ -32,4 +32,7 @@
 
     <bool name="has_envelope_key">false</bool>
     <bool name="has_explorer_key">false</bool>
+    
+    <!-- Undervolting module -->
+    <string name="undervolting_module">x10miniuv.ko</string>
 </resources>
