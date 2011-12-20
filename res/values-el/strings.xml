@@ -281,6 +281,8 @@
     <string name="pref_trackball_wake_summary">Το πάτημα του trackball ξυπνά τη συσκευή</string>
     <string name="pref_volume_wake_title">Ενεργ. με ένταση</string>
     <string name="pref_volume_wake_summary">Το πάτημα των πλήκτρων έντασης ενεργοποιεί τη συσκευή. Προορίζεται για συσκευές με πρόβλημα στο πλήκτρο power</string>
+    <string name="pref_back_button_ends_call_title">Το πλήκτρο Back τερματίζει την κλήση</string>
+    <string name="pref_back_button_ends_call_summary">Πιέζοντας το πλήκτρο Back τερματίζει την τρέχουσα κλήση</string>
     <string name="pref_trackball_unlock_title">Ξεκλείδωμα με trackball</string>
     <string name="pref_trackball_unlock_summary">Το πάτημα του trackball ξεκλειδώνει τη συσκευή</string>
     <string name="pref_slider_unlock_title">Ξεκλείδωμα με συρτάρι πληκτρολ.</string>
