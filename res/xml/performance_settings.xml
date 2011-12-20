@@ -55,6 +55,10 @@
             android:title="@string/pref_heapsize_title" android:summary="@string/pref_heapsize_summary"
             android:entries="@array/entries_heapsize"
             android:entryValues="@array/values_heapsize" />
+    
+         <ListPreference android:key="pref_sdcardcachesize" android:dialogTitle="@string/pref_sdcardcachesize_title"
+            android:title="@string/pref_sdcardcachesize_title" android:summary="@string/pref_sdcardcachesize_summary"
+            android:entries="@array/entries_sdcardcachesize" android:entryValues="@array/entries_sdcardcachesize" />
 
     </PreferenceCategory>
 

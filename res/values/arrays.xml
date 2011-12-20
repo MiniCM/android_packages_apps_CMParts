@@ -52,6 +52,14 @@
         <item>32m</item>
         <item>48m</item>
     </string-array>
+    
+    <string-array name="entries_sdcardcachesize">
+        <item>128KB</item>
+        <item>1024KB</item>
+        <item>2048KB</item>
+        <item>3072KB</item>
+        <item>4096KB</item>
+    </string-array>
 
     <string-array name="entries_install_location">
         <item>Automatic</item>
