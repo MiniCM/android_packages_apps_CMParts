@@ -296,6 +296,8 @@
     <string name="pref_volume_wake_summary">Pressing the volume up/down wakes the device. Intended for devices with hard to press power key</string>
     <string name="pref_back_button_ends_call_title">Back button ends call</string>
     <string name="pref_back_button_ends_call_summary">Pressing the back button ends the current call</string>
+    <string name="pref_ringer_loop_title">Loop ringtone</string>
+    <string name="pref_ringer_loop_summary">Play ringtone continuously</string>
     <string name="pref_trackball_unlock_title">Trackball unlock</string>
     <string name="pref_trackball_unlock_summary">Pressing the trackball unlocks the device</string>
     <string name="pref_slider_unlock_title">Sliding keyboard unlock</string>
