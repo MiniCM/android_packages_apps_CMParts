@@ -7,6 +7,13 @@
 			android:title="@string/ui_status_bar_clock_title"
 			android:summary="@string/ui_status_bar_clock_summary"
 			android:defaultValue="true" />
+		<CheckBoxPreference android:key="pref_status_bar_centerclock"
+			android:title="@string/ui_status_bar_centerclock_title"
+			android:summary="@string/ui_status_bar_centerclock_summary"
+			android:defaultValue="ffffff00" />
+                <Preference android:key="pref_status_bar_clockcolor"
+                        android:title="@string/ui_status_bar_clockcolor_title"
+                        android:summary="@string/ui_status_bar_clockcolor_summary" />
 		<ListPreference android:key="pref_status_bar_am_pm"
 			android:dialogTitle="@string/ui_status_bar_am_pm_title"
 			android:title="@string/ui_status_bar_am_pm_title"
