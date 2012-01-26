@@ -99,6 +99,10 @@
     <string name="ui_status_bar_am_pm_summary">Προβολή AM/PM δίπλα στο ρολόι</string>
     <string name="ui_status_bar_clock_title">Εμφάνιση ρολογιού</string>
     <string name="ui_status_bar_clock_summary">Το ρολόι της μπάρας κατάστασης θα είναι κρυμμένο, αν το απενεργοποιήσετε</string>
+    <string name="ui_status_bar_centerclock_title">Κεντραρισμένο ρολόι</string>
+    <string name="ui_status_bar_centerclock_summary">Το ρολόι θα είναι είναι κεντραρισμένο αν το ενεργοποιήσετε. Απενεργοποιήστε το για να μετακινηθεί στα δεξιά.</string>
+    <string name="ui_status_bar_clockcolor_title">Χρώμα ρολογιού</string>
+    <string name="ui_status_bar_clockcolor_summary">ffffffff</string>
     <string name="ui_status_bar_battery_title">Στυλ ένδειξης μπαταρίας</string>
     <string name="ui_status_bar_battery_summary">Επιλογές εμφάνισης ένδειξης μπαταρίας</string>
     <string name="ui_status_bar_compact_carrier_title">Συμπαγής ετικέτα παρόχου</string>
