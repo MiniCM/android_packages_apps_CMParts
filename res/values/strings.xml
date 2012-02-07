@@ -840,10 +840,10 @@
 
     <!-- A2SD Settings strings -->
     <string name="a2sd_settings_title">A2SD (ext) settings</string>
-    <string name="a2sd_title">A2SD (ext) settings (changes require reboot)</string>
+    <string name="a2sd_title">A2SD (ext) settings</string>
     <string name="a2sd_summary">App to SD card (ext) settings</string>    
     <string name="a2sd_mode_summary">List of A2SD modes\nCurrently installed: %S</string>
-    <string name="a2sd_modes_title">Available modes</string>
+    <string name="a2sd_modes_title">Available modes (requires reboot)</string>
     <string name="a2sd_info_title">A2SD Information</string>
     <string name="a2sd_dialog">A2SD Information</string>
     <string name="a2sd_loading">Loading A2SD information\u2026</string>
