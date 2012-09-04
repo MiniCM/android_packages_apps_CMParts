@@ -13,6 +13,11 @@
         <CheckBoxPreference android:key="lockscreen_always_battery"
             android:title="@string/pref_lockscreen_always_battery_title"
             android:summary="@string/pref_lockscreen_always_battery_summary" />
+			
+        <CheckBoxPreference 
+            android:key="perf_lockscreen_rotation" 
+            android:title="@string/pref_lockscreen_rotation_title" 
+            android:summary="@string/pref_lockscreen_rotation_summary"  />			
             
         <CheckBoxPreference android:key="lockscreen_flashlight"
             android:title="@string/pref_lockscreen_flashlight_title"
