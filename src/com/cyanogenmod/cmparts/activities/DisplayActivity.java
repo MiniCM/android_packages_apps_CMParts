@@ -96,8 +96,8 @@ public class DisplayActivity extends PreferenceActivity implements OnPreferenceC
         super.onCreate(savedInstanceState);
 
         mWindowManager = IWindowManager.Stub.asInterface(ServiceManager.getService("window"));
-		
-        setTitle(R.string.display_settings_title_subhead);
+
+		setTitle(R.string.display_settings_title_subhead);
         addPreferencesFromResource(R.xml.display_settings);
 
         PreferenceScreen prefSet = getPreferenceScreen();

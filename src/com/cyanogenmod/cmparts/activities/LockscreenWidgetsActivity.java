@@ -68,7 +68,7 @@ public class LockscreenWidgetsActivity extends PreferenceActivity implements
     private ListPreference mCalendarShowLocationPref;
     private ListPreference mCalendarShowDescriptionPref;
     private ListPreference mLockscreenWidgetLayout;
-    // private CheckBoxPreference mLockScreenRotation;	
+    // private CheckBoxPreference mLockScreenRotation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
