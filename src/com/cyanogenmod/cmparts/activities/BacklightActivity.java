@@ -81,7 +81,7 @@ public class BacklightActivity extends PreferenceActivity implements
 
         mLevelsEnabled = (CheckBoxPreference) prefSet.findPreference(LEVELS_ENABLED);
         mLevelsEnabled.setChecked(Settings.System.getInt(cr,
-                Settings.System.LIGHT_SENSOR_CUSTOM, 0) != 0);
+                Settings.System.LIGHT_SENSOR_CUSTOM, 1) != 0);		// use custom levels by default
         mLevelsEnabled.setOnPreferenceChangeListener(this);
 
         mScreenDim = (ListPreference) prefSet.findPreference(SCREEN_DIM);
@@ -92,7 +92,7 @@ public class BacklightActivity extends PreferenceActivity implements
 
         mDecreaseEnabled = (CheckBoxPreference) prefSet.findPreference(DECREASE_ENABLED);
         mDecreaseEnabled.setChecked(Settings.System.getInt(cr,
-                Settings.System.LIGHT_DECREASE, 0) != 0);
+                Settings.System.LIGHT_DECREASE, 1) != 0);			// decrease enabled by default
         mDecreaseEnabled.setOnPreferenceChangeListener(this);
 
         mDecreaseHysteresis = (ListPreference) prefSet.findPreference(DECREASE_HYSTERESIS);
