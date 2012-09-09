@@ -25,8 +25,13 @@
 			android:title="@string/ui_status_bar_battery_title"
 			android:summary="@string/ui_status_bar_battery_summary"
 			android:entries="@array/entries_status_bar_battery"
-			android:entryValues="@array/values_status_bar_battery"
-			android:persistent="false" />
+			android:entryValues="@array/values_status_bar_battery" />
+		<ListPreference android:key="pref_status_bar_battery_color"
+			android:dialogTitle="@string/ui_status_bar_battery_color_title"
+			android:title="@string/ui_status_bar_battery_color_title"
+			android:summary="@string/ui_status_bar_battery_color_summary"
+			android:entries="@array/entries_status_bar_battery_color"
+			android:entryValues="@array/values_status_bar_battery_color" />
 		<CheckBoxPreference android:key="pref_status_bar_compact_carrier"
 			android:title="@string/ui_status_bar_compact_carrier_title"
 			android:summary="@string/ui_status_bar_compact_carrier_summary"
