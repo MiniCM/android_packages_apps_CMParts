@@ -71,12 +71,21 @@ public class SoundActivity extends PreferenceActivity implements OnPreferenceCha
 
     private static final String ALARMS_LIMITVOL = "alarm-limitvol";
 
+    private static final String ENABLE_BOOTSOUND_PREF = "pref_enable_bootsound";
+
+    private static final String ENABLE_BOOTSOUND_PERSIST_PROP = "persist.sys.bootsound";
+
+    private static final String ENABLE_BOOTSOUND_DEFAULT = "0";
+
     private static final String CAMERA_SHUTTER_MUTE = "camera-mute";
 
     private static final String PREFIX = "persist.sys.";
 
     private static final String CAMERA_CATEGORY = "camera_category";
+
     private static final String CAMERA_SHUTTER_DISABLE = "ro.camera.sound.disabled";
+
+    private CheckBoxPreference mEnableBootSoundPref;
 
     private static String getKey(String suffix) {
         return PREFIX + suffix;
@@ -158,6 +167,16 @@ public class SoundActivity extends PreferenceActivity implements OnPreferenceCha
         lp.setSummary(lp.getEntry());
         lp.setOnPreferenceChangeListener(this);
 
+		mEnableBootSoundPref = (CheckBoxPreference) prefSet.findPreference(ENABLE_BOOTSOUND_PREF);
+		String enableBootSound = SystemProperties.get(ENABLE_BOOTSOUND_PERSIST_PROP, ENABLE_BOOTSOUND_DEFAULT);
+		Boolean playSound = enableBootSound.equals("1");
+		mEnableBootSoundPref.setChecked(playSound);
+		if (playSound) {
+			mEnableBootSoundPref.setSummary(R.string.pref_enable_bootsound_play_summary);
+		} else {
+			mEnableBootSoundPref.setSummary(R.string.pref_enable_bootsound_dont_summary);
+		}
+
         if (SystemProperties.getBoolean(CAMERA_SHUTTER_DISABLE, false)) {
             // we cannot configure camera sound, hide camera settigs
             prefSet.removePreference(prefSet.findPreference(CAMERA_CATEGORY));
@@ -166,7 +185,17 @@ public class SoundActivity extends PreferenceActivity implements OnPreferenceCha
             p.setChecked(SystemProperties.getBoolean(getKey(CAMERA_SHUTTER_MUTE), false));
             p.setOnPreferenceChangeListener(this);
         }
-    }
+	@Override
+	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+		if (preference == mEnableBootSoundPref) {
+			SystemProperties.set(ENABLE_BOOTSOUND_PERSIST_PROP,
+					mEnableBootSoundPref.isChecked() ? "1" : "0");
+			return true;
+		}
+		return false;
+	}
+
+
 
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String key = preference.getKey();

@@ -5,6 +5,11 @@
 	<PreferenceCategory android:key="general_category"
 		android:title="@string/general_title">
 
+		<!-- Enable bootsound -->
+		<CheckBoxPreference android:key="pref_enable_bootsound"
+			android:title="@string/pref_enable_bootsound_title"
+			android:summary="@string/pref_enable_bootsound_play_summary" />
+
 		<!-- Notifications -->
 		<CheckBoxPreference android:key="notif-focus"
 			android:title="@string/sound_notifications_focus_title"
