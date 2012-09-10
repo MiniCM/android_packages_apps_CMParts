@@ -53,6 +53,8 @@ public class CPUReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context ctx, Intent intent) {
+        configureLOWMEMKILL(ctx);
+
         if (SystemProperties.getBoolean(CPU_SETTINGS_PROP, false) == false
                 && intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             SystemProperties.set(CPU_SETTINGS_PROP, "true");
@@ -60,7 +62,7 @@ public class CPUReceiver extends BroadcastReceiver {
         } else {
             SystemProperties.set(CPU_SETTINGS_PROP, "false");
         }
-        
+
         if (SystemProperties.getBoolean(ULTRA_BRIGHTNESS_PROP, false) == true) {
             writeOneLine("/sys/devices/platform/i2c-adapter/i2c-0/0-0036/mode", "i2c_pwm");
             Log.e(TAG, "Ultra Brightness writing i2c_pwm: ");
@@ -177,6 +179,15 @@ public class CPUReceiver extends BroadcastReceiver {
 	    }
         return true;
     }
+
+    private void configureLOWMEMKILL(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+        CPUActivity.writeOneLine(PerformanceSettingsActivity.LOWMEMKILL_RUN_FILE, prefs.getString(PerformanceSettingsActivity.LOWMEMKILL_PREF,
+        PerformanceSettingsActivity.LOWMEMKILL_PREF_DEFAULT));
+        Log.d(TAG, "LowMemKill settings restored.");
+    }
+
 
     private void configureKSM(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);

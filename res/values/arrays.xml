@@ -335,6 +335,24 @@
         <item>26</item>
     </string-array>
 
+    <string-array name="entries_lowmemkill">
+        <item>default</item>
+        <item>every day use</item>
+        <item>multitasking</item>
+        <item>hard multitasking</item>
+        <item>soft multitasking</item>
+        <item>hard gaming</item>
+    </string-array>
+
+    <string-array name="values_lowmemkill">
+        <item>2560,4096,6144,10240,11264,12288</item>
+        <item>2560,4096,6144,11264,11776,14336</item>
+        <item>2560,4096,6144,11776,12288,16384</item>
+        <item>2560,4096,6144,10752,11264,13312</item>
+        <item>2560,4096,6144,7680,8704,10240</item>
+        <item>2560,4096,6144,18944,22016,23552</item>
+    </string-array>
+
     <string-array name="entries_light_filter_window">
         <item>2 s</item>
         <item>5 s</item>

@@ -45,6 +45,12 @@
             android:title="@string/pref_purgeable_assets_title"
             android:summary="@string/pref_purgeable_assets_summary" />
 
+        <ListPreference android:key="pref_lowmemkill"
+            android:dialogTitle="@string/pref_lowmemkill_title"
+            android:title="@string/pref_sd_readahead_title" android:summary="@string/pref_lowmemkill_summary"
+            android:entries="@array/entries_lowmemkill"
+            android:entryValues="@array/values_lowmemkill" />
+
         <CheckBoxPreference
             android:key="pref_ksm"
             android:title="@string/pref_ksm_title"

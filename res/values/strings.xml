@@ -481,7 +481,11 @@
 
     <!-- Performance Settings : Dithering -->
     <string name="pref_use_dithering_title">Enable surface dithering</string>
-    <string name="pref_use_dithering_summary">Dithering surfaces improves image quality at the cost of performance (requires reboot)</string>
+    <string name="pref_use_dithering_summary">Dithering surfaces improves image quality at the cost of performance(requires reboot)</string>
+
+    <!-- Performance : Kernel tweakings -->
+    <string name="pref_lowmemkill_title">Low Mem Killer</string>
+    <string name="pref_lowmemkill_summary">Option for Low Mem Killer</string>
 
     <!-- Performance Settings : KSM -->
     <string name="pref_ksm_title">Kernel samepage merging</string>

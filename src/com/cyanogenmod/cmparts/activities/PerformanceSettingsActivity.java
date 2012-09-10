@@ -120,6 +120,14 @@ public class PerformanceSettingsActivity extends PreferenceActivity implements P
 
     public static final String KSM_PREF_ENABLED = "1";
 
+    public static final String LOWMEMKILL_RUN_FILE = "/sys/module/lowmemorykiller/parameters/minfree";
+
+    public static final String LOWMEMKILL_PROP = "lowmemkill";
+
+    public static final String LOWMEMKILL_PREF = "pref_lowmemkill";
+
+    public static final String LOWMEMKILL_PREF_DEFAULT = "2560,4096,6144,10240,11264,12288";
+
     private ListPreference mCompcachePref;
 
     private CheckBoxPreference mJitPref;
@@ -143,6 +151,8 @@ public class PerformanceSettingsActivity extends PreferenceActivity implements P
     private ListPreference mSdcardcachesizePref;
 
     private CheckBoxPreference mKSMPref;
+
+    private ListPreference mLowMemKillPref;
 
     private AlertDialog alertDialog;
 
@@ -201,6 +211,15 @@ public class PerformanceSettingsActivity extends PreferenceActivity implements P
 	mSdcardcachesizePref.setValue(SystemProperties.get(SDCARDCACHESIZE_PERSIST_PROP,
                 SystemProperties.get(SDCARDCACHESIZE_PROP, SDCARDCACHESIZE_DEFAULT)));
         mSdcardcachesizePref.setOnPreferenceChangeListener(this);
+
+        mLowMemKillPref = (ListPreference) prefSet.findPreference(LOWMEMKILL_PREF);
+        if (CPUActivity.fileExists(LOWMEMKILL_RUN_FILE)) {
+        mLowMemKillPref.setValue(SystemProperties.get(LOWMEMKILL_PREF,
+                SystemProperties.get(LOWMEMKILL_PROP, LOWMEMKILL_PREF_DEFAULT)));
+        mLowMemKillPref.setOnPreferenceChangeListener(this);
+        } else {
+            prefSet.removePreference(mLowMemKillPref);
+        }
 
         mKSMPref = (CheckBoxPreference) prefSet.findPreference(KSM_PREF);
         if (CPUActivity.fileExists(KSM_RUN_FILE)) {
@@ -299,6 +318,13 @@ public class PerformanceSettingsActivity extends PreferenceActivity implements P
             if (newValue != null) {
                 SystemProperties.set(HEAPSIZE_PERSIST_PROP, (String)newValue);
                 return true;
+            }
+        }
+
+        if (preference == mLowMemKillPref) {
+            if (newValue != null) {
+            CPUActivity.writeOneLine(LOWMEMKILL_RUN_FILE, (String)newValue);
+            return true;
             }
         }
 
