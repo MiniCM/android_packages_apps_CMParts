@@ -483,6 +483,10 @@
     <string name="pref_use_dithering_title">Enable surface dithering</string>
     <string name="pref_use_dithering_summary">Dithering surfaces improves image quality at the cost of performance (requires reboot)</string>
 
+    <!-- Performance Settings : KSM -->
+    <string name="pref_ksm_title">Kernel samepage merging</string>
+    <string name="pref_ksm_summary">KSM reduces physical memory requirements and improves performance</string>
+
     <!-- Performance Settings : 16bpp Alpha -->
     <string name="pref_use_16bpp_alpha_title">Use 16bit transparency</string>
     <string name="pref_use_16bpp_alpha_summary">Using 16bit transparency can improve scrolling performance, but may cause visual artifacts (requires reboot)</string>
@@ -836,6 +840,7 @@
     <string name="cpu_settings_title">CPU settings</string>
     <string name="cpu_title">CPU settings</string>
     <string name="cpu_summary">Governor and clock settings</string>
+    <string name="cpu_cur_freq_title">Current CPU frequency</string>
     <string name="cpu_governors_title">Available governors</string>
     <string name="cpu_governors_summary">List of available governors\nCurrently selected: %S</string>
     <string name="cpu_min_freq_title">Min CPU frequency</string>

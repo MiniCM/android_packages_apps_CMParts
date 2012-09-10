@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+  <Preference
+        android:key="pref_cpu_freq_cur"
+        style="?android:preferenceInformationStyle"
+        android:title="@string/cpu_cur_freq_title"
+        android:selectable="false" />
+
   <ListPreference android:key="pref_cpu_gov" android:dialogTitle="@string/cpu_governors_title"
                   android:title="@string/cpu_governors_title" />
 
