@@ -17,6 +17,7 @@
 package com.cyanogenmod.cmparts.activities;
 
 import com.cyanogenmod.cmparts.R;
+import com.cyanogenmod.cmparts.activities.CPUActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -29,10 +30,12 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 import android.provider.Settings;
-
 import android.util.Log;
-
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Performance Settings
@@ -109,6 +112,22 @@ public class PerformanceSettingsActivity extends PreferenceActivity implements P
 
     private static final int LOCK_MMS_DEFAULT = 0;
 
+    public static final String KSM_RUN_FILE = "/sys/kernel/mm/ksm/run";
+
+    public static final String KSM_PREF = "pref_ksm";
+
+    public static final String KSM_PREF_DISABLED = "0";
+
+    public static final String KSM_PREF_ENABLED = "1";
+
+    public static final String LOWMEMKILL_RUN_FILE = "/sys/module/lowmemorykiller/parameters/minfree";
+
+    public static final String LOWMEMKILL_PROP = "lowmemkill";
+
+    public static final String LOWMEMKILL_PREF = "pref_lowmemkill";
+
+    public static final String LOWMEMKILL_PREF_DEFAULT = "2560,4096,6144,10240,11264,12288";
+
     private ListPreference mCompcachePref;
 
     private CheckBoxPreference mJitPref;
@@ -130,6 +149,10 @@ public class PerformanceSettingsActivity extends PreferenceActivity implements P
     private ListPreference mHeapsizePref;
 
     private ListPreference mSdcardcachesizePref;
+
+    private CheckBoxPreference mKSMPref;
+
+    private ListPreference mLowMemKillPref;
 
     private AlertDialog alertDialog;
 
@@ -189,6 +212,22 @@ public class PerformanceSettingsActivity extends PreferenceActivity implements P
                 SystemProperties.get(SDCARDCACHESIZE_PROP, SDCARDCACHESIZE_DEFAULT)));
         mSdcardcachesizePref.setOnPreferenceChangeListener(this);
 
+        mLowMemKillPref = (ListPreference) prefSet.findPreference(LOWMEMKILL_PREF);
+        if (CPUActivity.fileExists(LOWMEMKILL_RUN_FILE)) {
+        mLowMemKillPref.setValue(SystemProperties.get(LOWMEMKILL_PREF,
+                SystemProperties.get(LOWMEMKILL_PROP, LOWMEMKILL_PREF_DEFAULT)));
+        mLowMemKillPref.setOnPreferenceChangeListener(this);
+        } else {
+            prefSet.removePreference(mLowMemKillPref);
+        }
+
+        mKSMPref = (CheckBoxPreference) prefSet.findPreference(KSM_PREF);
+        if (CPUActivity.fileExists(KSM_RUN_FILE)) {
+            mKSMPref.setChecked(KSM_PREF_ENABLED.equals(CPUActivity.readOneLine(KSM_RUN_FILE)));
+        } else {
+            prefSet.removePreference(mKSMPref);
+        }            
+
         mDisableBootanimPref = (CheckBoxPreference) prefSet.findPreference(DISABLE_BOOTANIMATION_PREF);
         String disableBootanimation = SystemProperties.get(DISABLE_BOOTANIMATION_PERSIST_PROP, DISABLE_BOOTANIMATION_DEFAULT);
         mDisableBootanimPref.setChecked("1".equals(disableBootanimation));
@@ -241,6 +280,11 @@ public class PerformanceSettingsActivity extends PreferenceActivity implements P
             return true;
         }
 
+        if (preference == mKSMPref) {
+            CPUActivity.writeOneLine(KSM_RUN_FILE, mKSMPref.isChecked() ? "1" : "0");
+            return true;
+        }
+
         if (preference == mDisableBootanimPref) {
             SystemProperties.set(DISABLE_BOOTANIMATION_PERSIST_PROP,
                     mDisableBootanimPref.isChecked() ? "1" : "0");
@@ -274,6 +318,13 @@ public class PerformanceSettingsActivity extends PreferenceActivity implements P
             if (newValue != null) {
                 SystemProperties.set(HEAPSIZE_PERSIST_PROP, (String)newValue);
                 return true;
+            }
+        }
+
+        if (preference == mLowMemKillPref) {
+            if (newValue != null) {
+            CPUActivity.writeOneLine(LOWMEMKILL_RUN_FILE, (String)newValue);
+            return true;
             }
         }
 

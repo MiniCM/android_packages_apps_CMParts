@@ -17,6 +17,7 @@
 package com.cyanogenmod.cmparts.intents;
 
 import com.cyanogenmod.cmparts.activities.CPUActivity;
+import com.cyanogenmod.cmparts.activities.PerformanceSettingsActivity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -48,16 +49,20 @@ public class CPUReceiver extends BroadcastReceiver {
 
     private static String UV_MODULE;
 
+    private static final String KSM_SETTINGS_PROP = "sys.ksm.restored";
+
     @Override
     public void onReceive(Context ctx, Intent intent) {
+        configureLOWMEMKILL(ctx);
+
         if (SystemProperties.getBoolean(CPU_SETTINGS_PROP, false) == false
-                && intent.getAction().equals(Intent.ACTION_MEDIA_MOUNTED)) {
+                && intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             SystemProperties.set(CPU_SETTINGS_PROP, "true");
             configureCPU(ctx);
         } else {
             SystemProperties.set(CPU_SETTINGS_PROP, "false");
         }
-        
+
         if (SystemProperties.getBoolean(ULTRA_BRIGHTNESS_PROP, false) == true) {
             writeOneLine("/sys/devices/platform/i2c-adapter/i2c-0/0-0036/mode", "i2c_pwm");
             Log.e(TAG, "Ultra Brightness writing i2c_pwm: ");
@@ -66,7 +71,17 @@ public class CPUReceiver extends BroadcastReceiver {
             writeOneLine("/sys/devices/platform/i2c-adapter/i2c-0/0-0036/mode", "i2c_pwm_als");
             Log.e(TAG, "Ultra Brightness writing i2c_pwm_als: ");
 	}
-	
+
+        if (CPUActivity.fileExists(PerformanceSettingsActivity.KSM_RUN_FILE)) {
+            if (SystemProperties.getBoolean(KSM_SETTINGS_PROP, false) == false
+                    && intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+                SystemProperties.set(KSM_SETTINGS_PROP, "true");
+                configureKSM(ctx);
+            } else {
+                SystemProperties.set(KSM_SETTINGS_PROP, "false");
+            }
+        }
+
     }
 
     private void configureCPU(Context ctx) {
@@ -163,5 +178,23 @@ public class CPUReceiver extends BroadcastReceiver {
 		return false;
 	    }
         return true;
+    }
+
+    private void configureLOWMEMKILL(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+        CPUActivity.writeOneLine(PerformanceSettingsActivity.LOWMEMKILL_RUN_FILE, prefs.getString(PerformanceSettingsActivity.LOWMEMKILL_PREF,
+        PerformanceSettingsActivity.LOWMEMKILL_PREF_DEFAULT));
+        Log.d(TAG, "LowMemKill settings restored.");
+    }
+
+
+    private void configureKSM(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+        boolean ksm = prefs.getBoolean(PerformanceSettingsActivity.KSM_PREF, false);
+
+        CPUActivity.writeOneLine(PerformanceSettingsActivity.KSM_RUN_FILE, ksm ? "1" : "0");
+        Log.d(TAG, "KSM settings restored.");
     }
 }
