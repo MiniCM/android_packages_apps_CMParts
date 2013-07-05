@@ -34,6 +34,7 @@ import android.os.SystemProperties;
 
 import android.os.SystemProperties;
 import android.util.Log;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -180,16 +181,22 @@ public class DisplayActivity extends PreferenceActivity implements OnPreferenceC
             Settings.System.putInt(getContentResolver(),
                     Settings.System.ELECTRON_BEAM_ANIMATION_OFF, value ? 1 : 0);
         }
-        
+
         if (preference == mUltraBrightnessPref) {
+            File UltraBrighnessFile = new File("/sys/devices/i2c-0/0-0036/mode");
+            String brighnessFilename = "";
+            if (UltraBrighnessFile.exists())
+                brighnessFilename = "/sys/devices/i2c-0/0-0036/mode";
+            else
+                brighnessFilename = "/sys/devices/platform/i2c-adapter/i2c-0/0-0036/mode";
             value = mUltraBrightnessPref.isChecked();
             if (value==true) {
             	SystemProperties.set(ULTRABRIGHTNESS_PERSIST_PROP, "1");
-            	writeOneLine("/sys/devices/platform/i2c-adapter/i2c-0/0-0036/mode", "i2c_pwm");
+            	writeOneLine(brighnessFilename, "i2c_pwm");
             }
             else {
             	SystemProperties.set(ULTRABRIGHTNESS_PERSIST_PROP, "0");
-            	writeOneLine("/sys/devices/platform/i2c-adapter/i2c-0/0-0036/mode", "i2c_pwm_als");
+            	writeOneLine(brighnessFilename, "i2c_pwm_als");
             }
         }
 

@@ -27,6 +27,7 @@ import android.util.Log;
 import android.preference.CheckBoxPreference;
 import android.os.SystemProperties;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -164,13 +165,35 @@ public class CPUActivity extends PreferenceActivity implements
                 value = mUndervoltPref.isChecked();
                 if (value==true) {
 		            SystemProperties.set(UNDERVOLT_PERSIST_PROP, "0");
-		            //remove the undervolting module
-		            insmod(UV_MODULE, false);
+		            String vdd_levels_path = "/sys/devices/system/cpu/cpu0/cpufreq/vdd_levels";
+                    File vdd_levels = new File(vdd_levels_path);
+                    if (vdd_levels.isFile() && vdd_levels.canRead()) {
+                        fileWriteOneLine(vdd_levels_path, "122880 3");
+                        fileWriteOneLine(vdd_levels_path, "245760 4");
+                        fileWriteOneLine(vdd_levels_path, "320000 5");
+                        fileWriteOneLine(vdd_levels_path, "480000 6");
+                        fileWriteOneLine(vdd_levels_path, "604800 7");
+                    }
+                    else {
+                        //remove the undervolting module for .29 kernel
+                        insmod(UV_MODULE, false);
+                    }
                 }
                 else {
 		            SystemProperties.set(UNDERVOLT_PERSIST_PROP, "1");
-		            //insmod the undervolting module
-		            insmod(UV_MODULE, true);
+		            String vdd_levels_path = "/sys/devices/system/cpu/cpu0/cpufreq/vdd_levels";
+                    File vdd_levels = new File(vdd_levels_path);
+                    if (vdd_levels.isFile() && vdd_levels.canRead()) {
+                        fileWriteOneLine(vdd_levels_path, "122880 0");
+                        fileWriteOneLine(vdd_levels_path, "245760 2");
+                        fileWriteOneLine(vdd_levels_path, "320000 3");
+                        fileWriteOneLine(vdd_levels_path, "480000 5");
+                        fileWriteOneLine(vdd_levels_path, "604800 6");
+                    }
+                    else {
+                        //insmod the undervolting module for .29 kernel
+                        insmod(UV_MODULE, true);
+                    }
                 }
 		        return true;
             }
@@ -271,5 +294,19 @@ public class CPUActivity extends PreferenceActivity implements
         return true;
     }
 
+    public static boolean fileWriteOneLine(String fname, String value) {
+        try {
+            FileWriter fw = new FileWriter(fname);
+            try {
+                fw.write(value);
+            } finally {
+                fw.close();
+            }
+        } catch (IOException e) {
+            String Error = "Error writing to " + fname + ". Exception: ";
+            Log.e(TAG, Error, e);
+            return false;
+        }
+        return true;
+    }
 }
- 

@@ -31,6 +31,7 @@ import java.util.List;
 
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
 import android.provider.Settings;
 import java.io.DataOutputStream;
@@ -57,16 +58,20 @@ public class CPUReceiver extends BroadcastReceiver {
         } else {
             SystemProperties.set(CPU_SETTINGS_PROP, "false");
         }
-        
+        File UltraBrighnessFile = new File("/sys/devices/i2c-0/0-0036/mode");
+        String brighnessFilename = "";
+        if (UltraBrighnessFile.exists())
+            brighnessFilename = "/sys/devices/i2c-0/0-0036/mode";
+        else
+            brighnessFilename = "/sys/devices/platform/i2c-adapter/i2c-0/0-0036/mode";
         if (SystemProperties.getBoolean(ULTRA_BRIGHTNESS_PROP, false) == true) {
-            writeOneLine("/sys/devices/platform/i2c-adapter/i2c-0/0-0036/mode", "i2c_pwm");
+            writeOneLine(brighnessFilename, "i2c_pwm");
             Log.e(TAG, "Ultra Brightness writing i2c_pwm: ");
-        }   
+        }
         else {
-            writeOneLine("/sys/devices/platform/i2c-adapter/i2c-0/0-0036/mode", "i2c_pwm_als");
+            writeOneLine(brighnessFilename, "i2c_pwm_als");
             Log.e(TAG, "Ultra Brightness writing i2c_pwm_als: ");
-	}
-	
+        }
     }
 
     private void configureCPU(Context ctx) {
@@ -80,12 +85,34 @@ public class CPUReceiver extends BroadcastReceiver {
 	        
         UV_MODULE = ctx.getResources().getString(com.cyanogenmod.cmparts.R.string.undervolting_module);
 	    if (SystemProperties.getBoolean(UNDERVOLTING_PROP, false) == true) {
-            // insmod undervolting module
-            insmod(UV_MODULE, true);
+	    	String vdd_levels_path = "/sys/devices/system/cpu/cpu0/cpufreq/vdd_levels";
+            File vdd_levels = new File(vdd_levels_path);
+            if (vdd_levels.isFile() && vdd_levels.canRead()) {
+                fileWriteOneLine(vdd_levels_path, "122880 0");
+                fileWriteOneLine(vdd_levels_path, "245760 2");
+                fileWriteOneLine(vdd_levels_path, "320000 3");
+                fileWriteOneLine(vdd_levels_path, "480000 5");
+                fileWriteOneLine(vdd_levels_path, "604800 6");
+            }
+            else {
+                //insmod the undervolting module for .29 kernel
+                insmod(UV_MODULE, true);
+            }
         }   
         else {
-            // remove undervolting module
-            //insmod(UV_MODULE, false);
+            String vdd_levels_path = "/sys/devices/system/cpu/cpu0/cpufreq/vdd_levels";
+            File vdd_levels = new File(vdd_levels_path);
+            if (vdd_levels.isFile() && vdd_levels.canRead()) {
+                fileWriteOneLine(vdd_levels_path, "122880 3");
+                fileWriteOneLine(vdd_levels_path, "245760 4");
+                fileWriteOneLine(vdd_levels_path, "320000 5");
+                fileWriteOneLine(vdd_levels_path, "480000 6");
+                fileWriteOneLine(vdd_levels_path, "604800 7");
+            }
+            else {
+                //remove the undervolting module for .29 kernel
+                //insmod(UV_MODULE, false);
+            }
 	    }
 
         String governor = prefs.getString(CPUActivity.GOV_PREF, null);
@@ -162,6 +189,22 @@ public class CPUReceiver extends BroadcastReceiver {
 	    {
 		return false;
 	    }
+        return true;
+    }
+
+    public static boolean fileWriteOneLine(String fname, String value) {
+        try {
+            FileWriter fw = new FileWriter(fname);
+            try {
+                fw.write(value);
+            } finally {
+                fw.close();
+            }
+        } catch (IOException e) {
+            String Error = "Error writing to " + fname + ". Exception: ";
+            Log.e(TAG, Error, e);
+            return false;
+        }
         return true;
     }
 }
